@@ -13,8 +13,8 @@ class NeuralNet:
         ### Generate random weights
         # matrix of 5 weights for each of the 45 inputs
         self.weights_1 = np.random.rand(self.train_data.shape[1],5)
-        # matrix of 10 weights for each of the 5 inputs
-        self.weights_2 = np.random.rand(5, 10)
+        # matrix of 1 weight for each of the 5 inputs
+        self.weights_2 = np.random.rand(5, 1)
 
     # feed the inputs through the layers
     def feed_forward(self, test_data = np.array([])):
@@ -63,6 +63,10 @@ def main():
     #### Training data
     # matrix of digit inputs to train the neural net
     train_data = np.array([ digits.zero,
+                            digits.zero1,
+                            digits.zero2,
+                            digits.zero3,
+                            digits.zero4,
                             digits.one,
                             digits.two,
                             digits.three,
@@ -74,24 +78,28 @@ def main():
                             digits.nine ])
 
     # matrix of correct neural net outputs for the above data
-    correct_outputs = np.array([[1,0,0,0,0,0,0,0,0,0],
-                                [0,1,0,0,0,0,0,0,0,0],
-                                [0,0,1,0,0,0,0,0,0,0],
-                                [0,0,0,1,0,0,0,0,0,0],
-                                [0,0,0,0,1,0,0,0,0,0],
-                                [0,0,0,0,0,1,0,0,0,0],
-                                [0,0,0,0,0,0,1,0,0,0],
-                                [0,0,0,0,0,0,0,1,0,0],
-                                [0,0,0,0,0,0,0,0,1,0],
-                                [0,0,0,0,0,0,0,0,0,1]])
+    correct_outputs = np.array([[1],
+                                [1],
+                                [1],
+                                [1],
+                                [1],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0]])
     ####
 
     # matrix of inputs to test the neural net
-    test_data = np.array([testDigits.test_one])
+    test_data = np.array([testDigits.test_two])
 
     network = NeuralNet( train_data, correct_outputs)
 
-    for iteration in range(100):
+    for iteration in range(10000):
         network.feed_forward()
         network.backpropogation()
 
