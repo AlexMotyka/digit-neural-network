@@ -1,4 +1,5 @@
 import numpy as np
+import digits
 
 
 class NeuralNet:
@@ -39,13 +40,32 @@ def sigmoid(z):
 def sigmoid_derivative(z):
     return z * (1.0 -z)
 
-main():
-
+def main():
+    print(digits.one)
     #### Training data
-    # matrix of inputs to train the neural net
-    train_data = np.array([])
-    # matrix of correct outputs for the above data
-    correct_outputs = np.array([])
+    # matrix of digit inputs to train the neural net
+    train_data = np.array([ digits.zero,
+                            digits.one,
+                            digits.two,
+                            digits.three,
+                            digits.four,
+                            digits.five,
+                            digits.six,
+                            digits.seven,
+                            digits.eight,
+                            digits.nine ])
+    # matrix of correct neural net outputs for the above data
+    correct_outputs = np.array(
+                                [1,0,0,0,0,0,0,0,0,0],
+                                [0,1,0,0,0,0,0,0,0,0],
+                                [0,0,1,0,0,0,0,0,0,0],
+                                [0,0,0,1,0,0,0,0,0,0],
+                                [0,0,0,0,1,0,0,0,0,0],
+                                [0,0,0,0,0,1,0,0,0,0],
+                                [0,0,0,0,0,0,1,0,0,0],
+                                [0,0,0,0,0,0,0,1,0,0],
+                                [0,0,0,0,0,0,0,0,1,0],
+                                [0,0,0,0,0,0,0,0,0,1], )
     ####
 
     # matrix of inputs to test the neural net
