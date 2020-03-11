@@ -95,7 +95,7 @@ def main():
     ####
 
     # matrix of inputs to test the neural net
-    test_data = np.array([testDigits.test_two])
+    test_data = np.array([testDigits.test_zero1])
 
     network = NeuralNet( train_data, correct_outputs)
 
