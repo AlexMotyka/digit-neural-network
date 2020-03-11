@@ -1,5 +1,6 @@
 import numpy as np
 import digits
+import testDigits
 
 
 class NeuralNet:
@@ -16,19 +17,21 @@ class NeuralNet:
         self.weights_2 = np.random.rand(5, 10)
 
     # feed the inputs through the layers
-    def feed_forward(self, test_data = None):
-        # use test_data if it exists
-        if test_data:
-            # feed input through first layer
-            self.layer_1_out = sigmoid(np.dot(test_data, self.weights_1))
-            # feed layer_1_out through second layer to get the network outputs
-            self.train_outputs = sigmoid(np.dot(self.layer_1_out, self.weights_2))
+    def feed_forward(self, test_data = np.array([])):
         # use train_data
-        else:
+        if test_data.size == 0:
             # feed input through first layer
             self.layer_1_out = sigmoid(np.dot(self.train_data, self.weights_1))
             # feed layer_1_out through second layer to get the network outputs
             self.train_outputs = sigmoid(np.dot(self.layer_1_out, self.weights_2))
+        # use test_data
+        else:
+            # feed input through first layer
+            self.layer_1_out = sigmoid(np.dot(test_data, self.weights_1))
+            # feed layer_1_out through second layer to get the network outputs
+            prediction = sigmoid(np.dot(self.layer_1_out, self.weights_2))
+            return prediction
+
 
     def backpropogation(self):
         # print(self.train_outputs.shape)
@@ -84,15 +87,17 @@ def main():
     ####
 
     # matrix of inputs to test the neural net
-    test_data = np.array([])
+    test_data = np.array([testDigits.test_one])
 
     network = NeuralNet( train_data, correct_outputs)
 
-    for iteration in range(10000):
+    for iteration in range(100):
         network.feed_forward()
         network.backpropogation()
 
-    print (network.train_outputs)
+    #print (network.train_outputs)
+
+    print(network.feed_forward(test_data))
 
 
 if __name__ == "__main__":
