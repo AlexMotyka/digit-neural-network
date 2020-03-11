@@ -30,22 +30,31 @@ class NeuralNet:
             # feed layer_1_out through second layer to get the network outputs
             self.train_outputs = sigmoid(np.dot(self.layer_1_out, self.weights_2))
 
-    def backpropogation():
-        # update the weights using Sum Squared Error
-        # weights_2_change = sum squared error
-        # weights_1_change = sum squared error
+    def backpropogation(self):
+        # print(self.train_outputs.shape)
+        """
+        The loss function for backpropogation is the sum-squared error.
+        To determine how we should update the weights the derivative of the
+        sum-squared error is used to find the gradient.
+        This gradient is added to our weights matrix and the weights are updated
+        """
+        # update the weights using Sum Squared Error as the loss function
+        # Use the derivative of the loss function to determine
+        weights_2_delta = np.dot(self.layer_1_out.T, self.sum_squared_derivative())
+        weights_1_delta= np.dot(self.train_data.T, (np.dot(self.sum_squared_derivative(), self.weights_2.T) * sigmoid_derivative(self.layer_1_out)))
 
-        # self.weights_1 += weights_1_change
-        # self.weights_2 += weights_2_change
-        pass
+        self.weights_1 += weights_1_delta
+        self.weights_2 += weights_2_delta
 
+    def sum_squared_derivative(self):
+        return 2*(self.correct_outputs - self.train_outputs) * sigmoid_derivative(self.train_outputs)
 
 
 def sigmoid(z):
     return 1.0/(1+ np.exp(-z))
 
 def sigmoid_derivative(z):
-    return z * (1.0 -z)
+    return z * (1.0 - z)
 
 def main():
     #### Training data
@@ -78,6 +87,12 @@ def main():
     test_data = np.array([])
 
     network = NeuralNet( train_data, correct_outputs)
+
+    for iteration in range(10000):
+        network.feed_forward()
+        network.backpropogation()
+
+    print (network.train_outputs)
 
 
 if __name__ == "__main__":
