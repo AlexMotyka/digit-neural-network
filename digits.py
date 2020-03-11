@@ -1,4 +1,4 @@
-# this file contains arrays that represent the digits 0-9
+# this file contains arrays that represent the digits 0-9 as a 5x9 bitmap
 
 zero = [0,1,1,1,0,
         1,0,0,0,1,
