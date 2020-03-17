@@ -62,28 +62,64 @@ def sigmoid_derivative(z):
 def main():
     #### Training data
     # matrix of digit inputs to train the neural net
-    train_data = np.array([ digits.zero,
-                            digits.one,
-                            digits.two,
-                            digits.three,
-                            digits.four,
-                            digits.five,
-                            digits.six,
-                            digits.seven,
-                            digits.eight,
-                            digits.nine ])
+    # train_data = np.array([ digits.zero,
+    #                         digits.one,
+    #                         digits.two,
+    #                         digits.three,
+    #                         digits.four,
+    #                         digits.five,
+    #                         digits.six,
+    #                         digits.seven,
+    #                         digits.eight,
+    #                         digits.nine ])
+    train_data = []
+    correct_outputs = []
+
+    for digit in digits.zeros:
+        train_data.append(digit)
+        correct_outputs.append([1,0,0,0,0,0,0,0,0,0])
+    for digit in digits.ones:
+        train_data.append(digit)
+        correct_outputs.append([0,1,0,0,0,0,0,0,0,0])
+    for digit in digits.twos:
+        train_data.append(digit)
+        correct_outputs.append([0,0,1,0,0,0,0,0,0,0])
+    for digit in digits.threes:
+        train_data.append(digit)
+        correct_outputs.append([0,0,0,1,0,0,0,0,0,0])
+    for digit in digits.fours:
+        train_data.append(digit)
+        correct_outputs.append([0,0,0,0,1,0,0,0,0,0])
+    for digit in digits.fives:
+        train_data.append(digit)
+        correct_outputs.append([0,0,0,0,0,1,0,0,0,0])
+    for digit in digits.sixes:
+        train_data.append(digit)
+        correct_outputs.append([0,0,0,0,0,0,1,0,0,0])
+    for digit in digits.sevens:
+        train_data.append(digit)
+        correct_outputs.append([0,0,0,0,0,0,0,1,0,0])
+    for digit in digits.eights:
+        train_data.append(digit)
+        correct_outputs.append([0,0,0,0,0,0,0,0,1,0])
+    for digit in digits.nines:
+        train_data.append(digit)
+        correct_outputs.append([0,0,0,0,0,0,0,0,0,1])
+
+    train_data = np.asarray(train_data, dtype=np.float32)
+    correct_outputs = np.asarray(correct_outputs, dtype=np.float32)
 
     # matrix of correct neural net outputs for the above data
-    correct_outputs = np.array([[1,0,0,0,0,0,0,0,0,0],
-                                [0,1,0,0,0,0,0,0,0,0],
-                                [0,0,1,0,0,0,0,0,0,0],
-                                [0,0,0,1,0,0,0,0,0,0],
-                                [0,0,0,0,1,0,0,0,0,0],
-                                [0,0,0,0,0,1,0,0,0,0],
-                                [0,0,0,0,0,0,1,0,0,0],
-                                [0,0,0,0,0,0,0,1,0,0],
-                                [0,0,0,0,0,0,0,0,1,0],
-                                [0,0,0,0,0,0,0,0,0,1]])
+    # correct_outputs = np.array([[1,0,0,0,0,0,0,0,0,0],
+    #                             [0,1,0,0,0,0,0,0,0,0],
+    #                             [0,0,1,0,0,0,0,0,0,0],
+    #                             [0,0,0,1,0,0,0,0,0,0],
+    #                             [0,0,0,0,1,0,0,0,0,0],
+    #                             [0,0,0,0,0,1,0,0,0,0],
+    #                             [0,0,0,0,0,0,1,0,0,0],
+    #                             [0,0,0,0,0,0,0,1,0,0],
+    #                             [0,0,0,0,0,0,0,0,1,0],
+    #                             [0,0,0,0,0,0,0,0,0,1]])
     ####
 
     # matrix of inputs to test the neural net
