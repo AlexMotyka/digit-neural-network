@@ -121,7 +121,7 @@ def main():
     #                             [0,0,0,0,0,0,0,0,1,0],
     #                             [0,0,0,0,0,0,0,0,0,1]])
     ####
-
+    print(correct_outputs)
     # matrix of inputs to test the neural net
     test_data = np.array([testDigits.test_one])
 

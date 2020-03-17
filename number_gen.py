@@ -126,7 +126,7 @@ for number in number_array:
             # if the number is a 0, then roll 0 to 100 to see if it mutates (> 90 means mutation)
             if x == 0:
                 rolled_val = randint(0, 100)
-                if rolled_val > 90:
+                if rolled_val > 95:
                     new_number.append(1)
                 else:
                     new_number.append(0)
@@ -150,7 +150,7 @@ for number in number_array:
             # if the number is a 1, then roll 0 to 100 to see if it mutates (> 90 means mutation)
             if x == 1:
                 rolled_val = randint(0, 100)
-                if rolled_val > 90:
+                if rolled_val > 95:
                     new_number.append(0)
                 else:
                     new_number.append(1)
@@ -174,13 +174,13 @@ for number in number_array:
             # Mutation chance on both 0 and 1
             if x == 1:
                 rolled_val = randint(0, 100)
-                if rolled_val > 90:
+                if rolled_val > 95:
                     new_number.append(0)
                 else:
                     new_number.append(1)
             elif x == 0:
                 rolled_val = randint(0, 100)
-                if rolled_val > 90:
+                if rolled_val > 95:
                     new_number.append(1)
                 else:
                     new_number.append(0)
