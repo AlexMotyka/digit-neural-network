@@ -106,8 +106,8 @@ def main():
         train_data.append(digit)
         correct_outputs.append([0,0,0,0,0,0,0,0,0,1])
 
-    train_data = np.asarray(train_data, dtype=np.float32)
-    correct_outputs = np.asarray(correct_outputs, dtype=np.float32)
+    train_data = np.asarray(train_data, dtype=np.float128)
+    correct_outputs = np.asarray(correct_outputs, dtype=np.float128)
 
     # matrix of correct neural net outputs for the above data
     # correct_outputs = np.array([[1,0,0,0,0,0,0,0,0,0],
@@ -121,9 +121,8 @@ def main():
     #                             [0,0,0,0,0,0,0,0,1,0],
     #                             [0,0,0,0,0,0,0,0,0,1]])
     ####
-    print(correct_outputs)
     # matrix of inputs to test the neural net
-    test_data = np.array([testDigits.test_one])
+    test_data = np.array([digits.zero, digits.one, digits.two, digits.three, digits.four, digits.five, digits.six, digits.seven, digits.eight, digits.nine])
 
     network = NeuralNet( train_data, correct_outputs)
 
