@@ -112,7 +112,7 @@ file = open('newDigits.txt', 'w')
 complete_number_list = []
 
 # will make this many of each mutation type
-set_count = 1000
+set_count = 100
 
 #### MUTATION SET 1 ####
 # file.write("--------- Mutation 1's ---------" + '\n')
@@ -174,13 +174,13 @@ for number in number_array:
             # Mutation chance on both 0 and 1
             if x == 1:
                 rolled_val = randint(0, 100)
-                if rolled_val > 95:
+                if rolled_val > 98:
                     new_number.append(0)
                 else:
                     new_number.append(1)
             elif x == 0:
                 rolled_val = randint(0, 100)
-                if rolled_val > 95:
+                if rolled_val > 98:
                     new_number.append(1)
                 else:
                     new_number.append(0)
