@@ -106,23 +106,19 @@ def main():
 
     # print(network.train_outputs)
 
-    # matrix of inputs to test the neural net
-    test_data = np.array([digits.four])
-    print(network.feed_forward(test_data))
-    
-    # test_data=[digits.zero,
-    #             digits.one,
-    #             digits.two,
-    #             digits.three,
-    #             digits.four,
-    #             digits.five,
-    #             digits.six,
-    #             digits.seven,
-    #             digits.eight,
-    #             digits.nine]
-    # for test in test_data:
-    #     test_digit = np.array([test])
-    #     print(network.feed_forward(test_digit))
+    test_data=[digits.zero,
+                digits.one,
+                digits.two,
+                digits.three,
+                digits.four,
+                digits.five,
+                digits.six,
+                digits.seven,
+                digits.eight,
+                digits.nine]
+    for test in test_data:
+        test_digit = np.array([test])
+        print(network.feed_forward(test_digit))
 
     
 
