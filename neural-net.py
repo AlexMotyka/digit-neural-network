@@ -240,7 +240,7 @@ Z, linear_cache = linear_forward(A, W1, b1)
 
 # N layer neural network
 layers_dims = [n_x, 60, n_y]
-parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=3000, print_cost=True)
+parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=15000, print_cost=True)
 predictions_train_L = predict_layered_network_layer(X_train, parameters)
 print(np.sum(predictions_train_L == y_train))
 
@@ -259,6 +259,3 @@ test_digit = np.asanyarray([0,0,1,0,0,
 test_digit = sc.transform(test_digit).T
 predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
 print('Predicted digit is : ' + str(predicted_digit))
-
-
-
