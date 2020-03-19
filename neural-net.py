@@ -62,60 +62,60 @@ def sigmoid_derivative(z):
 def main():
     #### Training data
     # matrix of digit inputs to train the neural net
-    # train_data = np.array([ digits.zero0,
-    #                         digits.zero1,
-    #                         digits.zero2,
-    #                         digits.zero3,
-    #                         digits.zero4,
-    #                         digits.one,
-    #                         digits.two,
-    #                         digits.three,
-    #                         digits.four,
-    #                         digits.five,
-    #                         digits.six,
-    #                         digits.seven,
-    #                         digits.eight,
-    #                         digits.nine ])
+    train_data = np.array([ digits.zero0,
+                            digits.zero1,
+                            digits.zero2,
+                            digits.zero3,
+                            digits.zero4,
+                            digits.one,
+                            digits.two,
+                            digits.three,
+                            digits.four,
+                            digits.five,
+                            digits.six,
+                            digits.seven,
+                            digits.eight,
+                            digits.nine ])
     #
     # # matrix of correct neural net outputs for the above data
-    # correct_outputs = np.array([[1],
-    #                             [1],
-    #                             [1],
-    #                             [1],
-    #                             [1],
-    #                             [0],
-    #                             [0],
-    #                             [0],
-    #                             [0],
-    #                             [0],
-    #                             [0],
-    #                             [0],
-    #                             [0],
-    #                             [0]])
+    correct_outputs = np.array([[1],
+                                [1],
+                                [1],
+                                [1],
+                                [1],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0],
+                                [0]])
     ####
-    train_data = []
-    correct_outputs = []
+    # train_data = []
+    # correct_outputs = []
 
-    for digit in digits.zeros:
-        train_data.append(digit)
-        correct_outputs.append([1])
+    # for digit in digits.zeros:
+    #     train_data.append(digit)
+    #     correct_outputs.append([1])
 
-    non_zeros = [digits.one,
-                 digits.two,
-                 digits.three,
-                 digits.four,
-                 digits.five,
-                 digits.six,
-                 digits.seven,
-                 digits.eight,
-                 digits.nine ]
-    for digit in non_zeros:
-        train_data.append(digit)
-        correct_outputs.append([0])
+    # non_zeros = [digits.one,
+    #              digits.two,
+    #              digits.three,
+    #              digits.four,
+    #              digits.five,
+    #              digits.six,
+    #              digits.seven,
+    #              digits.eight,
+    #              digits.nine ]
+    # for digit in non_zeros:
+    #     train_data.append(digit)
+    #     correct_outputs.append([0])
 
-    train_data = np.asarray(train_data, dtype=np.float64)
+    # train_data = np.asarray(train_data, dtype=np.float64)
 
-    correct_outputs = np.asarray(correct_outputs, dtype=np.float64)
+    # correct_outputs = np.asarray(correct_outputs, dtype=np.float64)
 
     # matrix of inputs to test the neural net
     test_zero = np.array([testDigits.test_zero1])
@@ -126,7 +126,7 @@ def main():
 
     network = NeuralNet( train_data, correct_outputs)
 
-    for iteration in range(10000):
+    for iteration in range(15000):
         network.feed_forward()
         network.backpropogation()
 
