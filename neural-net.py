@@ -12,113 +12,113 @@ def initialize_parameters_deep(layer_dims):
         parameters_['b' + str(l)] = np.zeros((layer_dims[l], 1))
     return parameters_
 
-def linear_forward(a, w, b):
-    z = np.dot(w, a) + b
-    cache = (a, w, b)
-    return z, cache
+def linear_forward(activation, weight, bias):
+    weighted_sum = np.dot(weight, activation) + bias
+    cache = (activation, weight, bias)
+    return weighted_sum, cache
 
 
-def sigmoid_(z):
-    return 1 / (1 + np.exp(-z))
+def sigmoid_(weighted_sum):
+    return 1 / (1 + np.exp(-weighted_sum))
 
 
-def relu_(z):
-    return z * (z > 0)
+def relu_(weighted_sum):
+    return weighted_sum * (weighted_sum > 0)
 
 
-def drelu_(z):
-    return 1. * (z > 0)
+def drelu_(weighted_sum):
+    return 1. * (weighted_sum > 0)
 
 
-def dsigmoid_(z):
-    return sigmoid_(z) * (1 - sigmoid_(z))
+def dsigmoid_(weighted_sum):
+    return sigmoid_(weighted_sum) * (1 - sigmoid_(weighted_sum))
 
 
-def sigmoid(z):
-    return sigmoid_(z), z
+def sigmoid(weighted_sum):
+    return sigmoid_(weighted_sum), weighted_sum
 
 
-def relu(z):
-    return relu_(z), z
+def relu(weighted_sum):
+    return relu_(weighted_sum), weighted_sum
 
 
-def linear_activation_forward(a_prev, w, b, activation):
+def linear_activation_forward(activation_prev, weight, bias, activation):
     if activation == "sigmoid":
-        z, linear_cache = linear_forward(a_prev, w, b)
-        a, activation_cache = sigmoid(z)
+        weighted_sum, linear_cache = linear_forward(activation_prev, weight, bias)
+        activation, activation_cache = sigmoid(weighted_sum)
 
     elif activation == "relu":
-        z, linear_cache = linear_forward(a_prev, w, b)
-        a, activation_cache = relu(z)
+        weighted_sum, linear_cache = linear_forward(activation_prev, weight, bias)
+        activation, activation_cache = relu(weighted_sum)
 
     cache = (linear_cache, activation_cache)
 
-    return a, cache
+    return activation, cache
 
-def L_model_forward(x, parameters_):
+def layer_model_forward(x, parameters_):
     caches = []
-    A = x
-    L = len(parameters_) // 2
-    for l in range(1, L):
-        A_prev = A
-        A, cache = linear_activation_forward(A_prev, parameters_['W' + str(l)], parameters_['b' + str(l)], "relu")
+    activation = x
+    param_length = len(parameters_) // 2
+    for l in range(1, param_length):
+        activation_prev = activation
+        activation, cache = linear_activation_forward(activation_prev, parameters_['W' + str(l)], parameters_['b' + str(l)], "relu")
         caches.append(cache)
-    AL, cache = linear_activation_forward(A, parameters_['W' + str(L)], parameters_['b' + str(L)], "sigmoid")
+    activation_linear, cache = linear_activation_forward(activation, parameters_['W' + str(param_length)], parameters_['b' + str(param_length)], "sigmoid")
     caches.append(cache)
-    return AL, caches
+    return activation_linear, caches
 
 
-def compute_cost(a_l, y):
-    m = y.shape[1]
-    cost = -(1 / m) * np.sum((y * np.log(a_l) + (1 - y) * np.log(1 - a_l)))
+def compute_cost(activation_layer, y_):
+    m = y_.shape[1]
+    cost = -(1 / m) * np.sum((y_ * np.log(activation_layer) + (1 - y_) * np.log(1 - activation_layer)))
     cost = np.squeeze(cost)
     return cost
 
-def linear_backward(d_z, cache):
-    a_prev, w, b = cache
-    m = a_prev.shape[1]
-    d_w = (1 / m) * np.dot(d_z, a_prev.T)
-    db = (1 / m) * np.sum(d_z, axis=1, keepdims=True)
-    d_a_prev = np.dot(w.T, d_z)
-    return d_a_prev, d_w, db
+def linear_backward(deriv_weighted_sum, cache):
+    activation_prev, weight, bias = cache
+    m = activation_prev.shape[1]
+    deriv_weight = (1 / m) * np.dot(deriv_weighted_sum, activation_prev.T)
+    deriv_bias = (1 / m) * np.sum(deriv_weighted_sum, axis=1, keepdims=True)
+    deriv_activation_prev = np.dot(weight.T, deriv_weighted_sum)
+    return deriv_activation_prev, deriv_weight, deriv_bias
 
 
-def relu_backward(d_a, activation_cache):
-    return d_a * drelu_(activation_cache)
+def relu_backward(deriv_activation, activation_cache):
+    return deriv_activation * drelu_(activation_cache)
 
 
-def sigmoid_backward(d_a, activation_cache):
-    return d_a * dsigmoid_(activation_cache)
+def sigmoid_backward(deriv_aactivation, activation_cache):
+    return deriv_aactivation * dsigmoid_(activation_cache)
 
 
-def linear_activation_backward(d_a, cache, activation):
+def linear_activation_backward(deriv_activation, cache, activation):
     linear_cache_, activation_cache = cache
     if activation == "relu":
-        d_z = relu_backward(d_a, activation_cache)
-        d_a_prev, d_w, db = linear_backward(d_z, linear_cache_)
+        deriv_weighted_sum = relu_backward(deriv_activation, activation_cache)
+        deriv_activation_prev, deriv_weight, deriv_bias = linear_backward(deriv_weighted_sum, linear_cache_)
 
     elif activation == "sigmoid":
-        d_z = sigmoid_backward(d_a, activation_cache)
-        d_a_prev, d_w, db = linear_backward(d_z, linear_cache_)
-    return d_a_prev, d_w, db
+        deriv_weighted_sum = sigmoid_backward(deriv_activation, activation_cache)
+        deriv_activation_prev, deriv_weight, deriv_bias = linear_backward(deriv_weighted_sum, linear_cache_)
+    return deriv_activation_prev, deriv_weight, deriv_bias
 
 
 # back propogation for L layers
-def L_model_backward(a_l, y, caches):
+def L_model_backward(activation_layer, y_, caches):
     grads = {}
     cache_length = len(caches)
-    deriv_a_l = - (np.divide(y, a_l) - np.divide(1 - y, 1 - a_l))
+    deriv_activation_layer = - (np.divide(y_, activation_layer) - np.divide(1 - y_, 1 - activation_layer))
 
     current_cache = caches[cache_length - 1]
-    grads["dA" + str(cache_length - 1)], grads["dW" + str(cache_length)], grads["db" + str(cache_length)] = linear_activation_backward(deriv_a_l,
+    grads["dA" + str(cache_length - 1)], grads["dW" + str(cache_length)], grads["db" + str(cache_length)] = linear_activation_backward(deriv_activation_layer,
                                                                                                       current_cache,
                                                                                                       "sigmoid")
     for l in reversed(range(cache_length - 1)):
         current_cache = caches[l]
-        deriv_a_prev_temp, deriv_w_temp, deriv_b_temp = linear_activation_backward(grads["dA" + str(l + 1)], current_cache, "relu")
-        grads["dA" + str(l)] = deriv_a_prev_temp
-        grads["dW" + str(l + 1)] = deriv_w_temp
-        grads["db" + str(l + 1)] = deriv_b_temp
+        deriv_activation_prev_temp, deriv_weight_temp, deriv_bias_temp = linear_activation_backward(grads["dA" + str(l + 1)], current_cache, "relu")
+        grads["dA" + str(l)] = deriv_activation_prev_temp
+        grads["dW" + str(l + 1)] = deriv_weight_temp
+        grads["db" + str(l + 1)] = deriv_bias_temp
     return grads
 
 
@@ -130,24 +130,24 @@ def update_parameters(parameters_, grads, learning_rate):
         parameters_["b" + str(l + 1)] = parameters_["b" + str(l + 1)] - learning_rate * grads["db" + str(l + 1)]
     return parameters_
 
-def L_layer_model(x, y, layers_dims_, learning_rate=0.00042, num_iterations=3000, print_cost=False):
+def layered_network_layer_model(x_, y_, layers_dims_, learning_rate=0.00042, num_iterations=3000, print_cost=False):
     np.random.seed(1)
     costs = []
     parameters_ = initialize_parameters_deep(layers_dims_)
     for i in range(0, num_iterations):
-        AL, caches = L_model_forward(x, parameters_)
-        cost = compute_cost(AL, y)
-        grads = L_model_backward(AL, y, caches)
+        AL, caches = layer_model_forward(x_, parameters_)
+        cost = compute_cost(AL, y_)
+        grads = L_model_backward(AL, y_, caches)
         parameters_ = update_parameters(parameters_, grads, learning_rate)
         if print_cost and i % 1000 == 0:
-            print("Cost after iteration %i: %f" % (i, cost))
+            print("Cost at iteration %i: %f" % (i, cost))
         if print_cost and i % 1000 == 0:
             costs.append(cost)
 
     return parameters_
 
-def predict_L_layer(x, parameters_, results=False):
-    a_l, caches = L_model_forward(x, parameters_)
+def predict_layered_network_layer(x_, parameters_, results=False):
+    a_l, caches = layer_model_forward(x_, parameters_)
     if results:
         return a_l.reshape(1, a_l.shape[0]), np.argmax(a_l, axis=0)
     prediction = np.argmax(a_l, axis=0)
@@ -240,11 +240,11 @@ Z, linear_cache = linear_forward(A, W1, b1)
 
 # N layer neural network
 layers_dims = [n_x, 60, n_y]
-parameters = L_layer_model(X_train, Y_train_, layers_dims, num_iterations=3000, print_cost=True)
-predictions_train_L = predict_L_layer(X_train, parameters)
+parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=3000, print_cost=True)
+predictions_train_L = predict_layered_network_layer(X_train, parameters)
 print(np.sum(predictions_train_L == y_train))
 
-predictions_test_L = predict_L_layer(X_test, parameters)
+predictions_test_L = predict_layered_network_layer(X_test, parameters)
 print(np.sum(predictions_test_L == y_test))
 
 test_digit = np.asanyarray([0,0,1,0,0,
@@ -257,7 +257,7 @@ test_digit = np.asanyarray([0,0,1,0,0,
             0,0,1,0,0,
             0,0,1,0,0], dtype=np.uint8).reshape((45, 1)).T
 test_digit = sc.transform(test_digit).T
-predicted_digit = predict_L_layer(test_digit, parameters, True)
+predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
 print('Predicted digit is : ' + str(predicted_digit))
 
 
