@@ -113,13 +113,9 @@ def main():
         train_data.append(digit)
         correct_outputs.append([0])
 
-    # for digit in digits.ones:
-    #     train_data.append(digit)
-    #     correct_outputs.append([0])
+    train_data = np.asarray(train_data, dtype=np.float64)
 
-    train_data = np.asarray(train_data, dtype=np.float128)
-
-    correct_outputs = np.asarray(correct_outputs, dtype=np.float128)
+    correct_outputs = np.asarray(correct_outputs, dtype=np.float64)
 
     # matrix of inputs to test the neural net
     test_zero = np.array([testDigits.test_zero1])
