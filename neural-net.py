@@ -60,39 +60,9 @@ def sigmoid_derivative(z):
     return z * (1.0 - z)
 
 def main():
-    #### Training data
-    # matrix of digit inputs to train the neural net
-    train_data = np.array([ digits.zero0,
-                            digits.zero1,
-                            digits.zero2,
-                            digits.zero3,
-                            digits.zero4,
-                            digits.one,
-                            digits.two,
-                            digits.three,
-                            digits.four,
-                            digits.five,
-                            digits.six,
-                            digits.seven,
-                            digits.eight,
-                            digits.nine ])
-    #
-    # # matrix of correct neural net outputs for the above data
-    correct_outputs = np.array([[1],
-                                [1],
-                                [1],
-                                [1],
-                                [1],
-                                [0],
-                                [0],
-                                [0],
-                                [0],
-                                [0],
-                                [0],
-                                [0],
-                                [0],
-                                [0]])
-    ####
+    #### Training data ####
+    
+    #### USING HANDMADE ZEROS ####
     # train_data = []
     # correct_outputs = []
 
@@ -114,15 +84,33 @@ def main():
     #     correct_outputs.append([0])
 
     # train_data = np.asarray(train_data, dtype=np.float64)
-
     # correct_outputs = np.asarray(correct_outputs, dtype=np.float64)
+    #################################
 
-    # matrix of inputs to test the neural net
-    test_zero = np.array([testDigits.test_zero1])
+    ###### USING GENERATED ZEROS ########
+    train_data = []
+    correct_outputs = []
 
-    test_one = np.array([digits.one])
+    for digit in digits.generated_zeros:
+        train_data.append(digit)
+        correct_outputs.append([1])
 
-    test_two = np.array([digits.two])
+    non_zeros = [digits.one,
+                 digits.two,
+                 digits.three,
+                 digits.four,
+                 digits.five,
+                 digits.six,
+                 digits.seven,
+                 digits.eight,
+                 digits.nine ]
+    for digit in non_zeros:
+        train_data.append(digit)
+        correct_outputs.append([0])
+
+    train_data = np.asarray(train_data, dtype=np.float64)
+    correct_outputs = np.asarray(correct_outputs, dtype=np.float64)
+    ################################################################
 
     network = NeuralNet( train_data, correct_outputs)
 
@@ -132,6 +120,12 @@ def main():
 
     #print (network.train_outputs)
 
+    # Test to see if the neural network can identify the zero
+    test_zero = np.array([testDigits.test_zero1])
+    test_one = np.array([digits.one])
+    test_two = np.array([digits.two])
+
+    # feed the test digits through the neural network
     print(network.feed_forward(test_zero))
     print(network.feed_forward(test_one))
     print(network.feed_forward(test_two))
