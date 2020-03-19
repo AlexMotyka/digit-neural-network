@@ -100,7 +100,7 @@ def main():
 
     network = NeuralNet( train_data, correct_outputs)
 
-    for iteration in range(1500):
+    for iteration in range(10000):
         network.feed_forward()
         network.backpropogation()
 
