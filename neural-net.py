@@ -60,18 +60,6 @@ def sigmoid_derivative(z):
     return z * (1.0 - z)
 
 def main():
-    #### Training data
-    # matrix of digit inputs to train the neural net
-    # train_data = np.array([ digits.zero,
-    #                         digits.one,
-    #                         digits.two,
-    #                         digits.three,
-    #                         digits.four,
-    #                         digits.five,
-    #                         digits.six,
-    #                         digits.seven,
-    #                         digits.eight,
-    #                         digits.nine ])
     train_data = []
     correct_outputs = []
 
@@ -106,31 +94,37 @@ def main():
         train_data.append(digit)
         correct_outputs.append([0,0,0,0,0,0,0,0,0,1])
 
-    train_data = np.asarray(train_data, dtype=np.float128)
-    correct_outputs = np.asarray(correct_outputs, dtype=np.float128)
+    train_data = np.asarray(train_data, dtype=np.float64)
+    correct_outputs = np.asarray(correct_outputs, dtype=np.float64)
 
-    # matrix of correct neural net outputs for the above data
-    # correct_outputs = np.array([[1,0,0,0,0,0,0,0,0,0],
-    #                             [0,1,0,0,0,0,0,0,0,0],
-    #                             [0,0,1,0,0,0,0,0,0,0],
-    #                             [0,0,0,1,0,0,0,0,0,0],
-    #                             [0,0,0,0,1,0,0,0,0,0],
-    #                             [0,0,0,0,0,1,0,0,0,0],
-    #                             [0,0,0,0,0,0,1,0,0,0],
-    #                             [0,0,0,0,0,0,0,1,0,0],
-    #                             [0,0,0,0,0,0,0,0,1,0],
-    #                             [0,0,0,0,0,0,0,0,0,1]])
-    ####
-    # matrix of inputs to test the neural net
-    test_data = np.array([digits.four])
 
     network = NeuralNet( train_data, correct_outputs)
 
-    for iteration in range(100):
+    for iteration in range(1500):
         network.feed_forward()
         network.backpropogation()
 
+    # print(network.train_outputs)
+
+    # matrix of inputs to test the neural net
+    test_data = np.array([digits.four])
     print(network.feed_forward(test_data))
+    
+    # test_data=[digits.zero,
+    #             digits.one,
+    #             digits.two,
+    #             digits.three,
+    #             digits.four,
+    #             digits.five,
+    #             digits.six,
+    #             digits.seven,
+    #             digits.eight,
+    #             digits.nine]
+    # for test in test_data:
+    #     test_digit = np.array([test])
+    #     print(network.feed_forward(test_digit))
+
+    
 
 
 if __name__ == "__main__":
