@@ -110,7 +110,7 @@ file = open('correct_digits.txt', 'w')
 complete_number_list = []
 
 # seed random number generator
-seed(9853)
+seed(933)
 
 # will make this many of each mutation type
 set_count = 50
@@ -213,13 +213,13 @@ file.write(str(complete_number_list) + '\n')
 # close the file
 file.close()
 
-test = [0, 1, 1, 1, 0,
+test = [1, 1, 1, 1, 0,
         1, 0, 0, 0, 1,
-        0, 0, 0, 0, 1,
-        0, 0, 0, 0, 1,
-        0, 0, 0, 1, 0,
-        0, 0, 0, 0, 1,
-        0, 0, 0, 0, 1,
         1, 0, 0, 0, 1,
-        0, 0, 1, 1, 0]
+        1, 0, 0, 0, 1,
+        1, 0, 0, 0, 1,
+        1, 0, 0, 0, 1,
+        1, 0, 0, 0, 1,
+        1, 0, 0, 0, 1,
+        0, 1, 1, 1, 0]
 
