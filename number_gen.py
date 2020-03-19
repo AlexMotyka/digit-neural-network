@@ -113,7 +113,7 @@ complete_number_list = []
 seed(9853)
 
 # will make this many of each mutation type
-set_count = 1000
+set_count = 20
 mutation_const = 75
 count = 0
 os.mkdir('digits_correct')
