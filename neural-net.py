@@ -250,11 +250,12 @@ layers_dims = [n_x, 60, n_y]
 parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=15000, print_cost=True)
 predictions_train_L = predict_layered_network_layer(X_train, parameters)
 
+# Creates a scatter plot that visualizes the cost over time
 plt.plot(cumulative_cost_data[0], cumulative_cost_data[1], 'ro')
 plt.grid(True)
 plt.title('Cost vs Iterations during Training')
 plt.xlabel('# of Iterations')
-plt.ylabel('# Cost')
+plt.ylabel('Cost')
 
 
 print(np.sum(predictions_train_L == y_train))
