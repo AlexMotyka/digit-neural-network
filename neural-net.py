@@ -271,49 +271,50 @@ total_correct = 0
 for digit in testDigits.zeros:
     test_data.append(digit)
     correct_digits.append(0)
-# for digit in testDigits.ones:
-#     train_data.append(digit)
-#     correct_digits.append(1)
-# for digit in testDigits.twos:
-#     train_data.append(digit)
-#     correct_digits.append(2)
-# for digit in testDigits.threes:
-#     train_data.append(digit)
-#     correct_digits.append(3)
-# for digit in testDigits.fours:
-#     train_data.append(digit)
-#     correct_digits.append(4)
-# for digit in testDigits.fives:
-#     train_data.append(digit)
-#     correct_digits.append(5)
-# for digit in testDigits.sixes:
-#     train_data.append(digit)
-#     correct_digits.append(6)
-# for digit in testDigits.sevens:
-#     train_data.append(digit)
-#     correct_digits.append(7)
-# for digit in testDigits.eights:
-#     train_data.append(digit)
-#     correct_digits.append(8)
-# for digit in testDigits.nines:
-#     train_data.append(digit)
-#     correct_digits.append(9)
+for digit in testDigits.ones:
+    test_data.append(digit)
+    correct_digits.append(1)
+for digit in testDigits.twos:
+    test_data.append(digit)
+    correct_digits.append(2)
+for digit in testDigits.threes:
+    test_data.append(digit)
+    correct_digits.append(3)
+for digit in testDigits.fours:
+    test_data.append(digit)
+    correct_digits.append(4)
+for digit in testDigits.fives:
+    test_data.append(digit)
+    correct_digits.append(5)
+for digit in testDigits.sixes:
+    test_data.append(digit)
+    correct_digits.append(6)
+for digit in testDigits.sevens:
+    test_data.append(digit)
+    correct_digits.append(7)
+for digit in testDigits.eights:
+    test_data.append(digit)
+    correct_digits.append(8)
+for digit in testDigits.nines:
+    test_data.append(digit)
+    correct_digits.append(9)
 
 index = 0
 for digit in test_data:
     test_digit = np.asanyarray(digit, dtype=np.uint8).reshape((45, 1)).T
     test_digit = sc.transform(test_digit).T
     predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
+    print("\n")
     print(predicted_digit[0])
     prediction = np.argmax(predicted_digit[0])
-    print("Prediction is : " + str(prediction))
+
     if prediction == correct_digits[index]:
         total_correct += 1
-        print("Correct.")
+        print("Prediction of " + str(prediction) + " is CORRECT")
     else:
-        print("Wrong.")
+        print("Prediction of " + str(prediction) + " is WRONG")
     index += 1
-print("Total correct out of 30: " + str(total_correct))
+print("\nTotal correct: " + str(total_correct) + "/30")
 
 
 
