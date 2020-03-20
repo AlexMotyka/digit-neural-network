@@ -165,6 +165,8 @@ def predict_layered_network_layer(x_, parameters_, results=False):
 train_data = []
 correct_outputs = []
 
+# read in data from digits.py and append it to the training data
+# the correct output the network should produce for that digit is appended to the correct_outputs array 
 for digit in digits.zeros:
     train_data.append(digit)
     correct_outputs.append([0])
@@ -196,6 +198,7 @@ for digit in digits.nines:
     train_data.append(digit)
     correct_outputs.append([9])
 
+# convert the lists to numpy array for performance, and then zip them together
 train_data = np.asanyarray(train_data, dtype=np.uint8)
 correct_outputs = np.asanyarray(correct_outputs, dtype=np.uint8)
 images_and_labels = list(zip(train_data, correct_outputs))
@@ -247,6 +250,7 @@ A = X_train
 Z, linear_cache = linear_forward(A, W1, b1)
 
 # N layer neural network
+# 45 inputs, 60 outputs in the hidden layer, and 10 outputs in the last layer(1 for each digit)
 layers_dims = [n_x, 60, n_y]
 parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=35000, print_cost=True)
 predictions_train_L = predict_layered_network_layer(X_train, parameters)
@@ -264,10 +268,14 @@ print(np.sum(predictions_train_L == y_train))
 predictions_test_L = predict_layered_network_layer(X_test, parameters)
 print(np.sum(predictions_test_L == y_test))
 
+# arrays to store the test data
 test_data = []
 correct_digits = []
+# total correct predictions
 total_correct = 0
 
+# read in data from testDigits.py and append it to the test data
+# the correct output the network should produce for that digit is appended to the correct digits array 
 for digit in testDigits.zeros:
     test_data.append(digit)
     correct_digits.append(0)
@@ -298,14 +306,17 @@ for digit in testDigits.eights:
 for digit in testDigits.nines:
     test_data.append(digit)
     correct_digits.append(9)
-
+# loop through the test data and feed each test digit through the network
 index = 0
 for digit in test_data:
+    # format the test digit as a valid numpy array
     test_digit = np.asanyarray(digit, dtype=np.uint8).reshape((45, 1)).T
     test_digit = sc.transform(test_digit).T
     predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
     print("\n")
+    # Output from the last layer of the network
     print(predicted_digit[0])
+    # The network prediction is the digit with the highest confidence
     prediction = np.argmax(predicted_digit[0])
 
     if prediction == correct_digits[index]:
