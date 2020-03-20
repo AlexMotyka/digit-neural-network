@@ -1,5 +1,6 @@
 import numpy as np
 import digits
+import testDigits
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
@@ -263,17 +264,70 @@ print(np.sum(predictions_train_L == y_train))
 predictions_test_L = predict_layered_network_layer(X_test, parameters)
 print(np.sum(predictions_test_L == y_test))
 
-test_digit = np.asanyarray([0,0,1,0,0,
-            0,1,1,0,0,
-            0,0,1,0,0,
-            0,0,1,0,0,
-            0,0,1,0,0,
-            0,0,1,0,0,
-            0,0,1,0,0,
-            0,0,1,0,0,
-            0,0,1,0,0], dtype=np.uint8).reshape((45, 1)).T
-test_digit = sc.transform(test_digit).T
-predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
-print('Predicted digit is : ' + str(predicted_digit))
+test_data = []
+correct_digits = []
+total_correct = 0
+
+for digit in testDigits.zeros:
+    test_data.append(digit)
+    correct_digits.append(0)
+# for digit in testDigits.ones:
+#     train_data.append(digit)
+#     correct_digits.append(1)
+# for digit in testDigits.twos:
+#     train_data.append(digit)
+#     correct_digits.append(2)
+# for digit in testDigits.threes:
+#     train_data.append(digit)
+#     correct_digits.append(3)
+# for digit in testDigits.fours:
+#     train_data.append(digit)
+#     correct_digits.append(4)
+# for digit in testDigits.fives:
+#     train_data.append(digit)
+#     correct_digits.append(5)
+# for digit in testDigits.sixes:
+#     train_data.append(digit)
+#     correct_digits.append(6)
+# for digit in testDigits.sevens:
+#     train_data.append(digit)
+#     correct_digits.append(7)
+# for digit in testDigits.eights:
+#     train_data.append(digit)
+#     correct_digits.append(8)
+# for digit in testDigits.nines:
+#     train_data.append(digit)
+#     correct_digits.append(9)
+
+index = 0
+for digit in test_data:
+    test_digit = np.asanyarray(digit, dtype=np.uint8).reshape((45, 1)).T
+    test_digit = sc.transform(test_digit).T
+    predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
+    print(predicted_digit[0])
+    prediction = np.argmax(predicted_digit[0])
+    print("Prediction is : " + str(prediction))
+    if prediction == correct_digits[index]:
+        total_correct += 1
+        print("Correct.")
+    else:
+        print("Wrong.")
+    index += 1
+print("Total correct out of 30: " + str(total_correct))
+
+
+
+# test_digit = np.asanyarray([0,0,1,0,0,
+#             0,1,1,0,0,
+#             0,0,1,0,0,
+#             0,0,1,0,0,
+#             0,0,1,0,0,
+#             0,0,1,0,0,
+#             0,0,1,0,0,
+#             0,0,1,0,0,
+#             0,0,1,0,0], dtype=np.uint8).reshape((45, 1)).T
+# test_digit = sc.transform(test_digit).T
+# predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
+# print('Predicted digit is : ' + str(predicted_digit))
 
 plt.show()
