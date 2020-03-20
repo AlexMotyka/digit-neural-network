@@ -2,6 +2,12 @@ import numpy as np
 import digits
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
+# stores iterations and costs for the Cost vs. Iterations graph
+# first array stores iterations
+# second array stores costs
+cumulative_cost_data = [[],[]]
 
 def initialize_parameters_deep(layer_dims):
     np.random.seed(3)
@@ -139,10 +145,11 @@ def layered_network_layer_model(x_, y_, layers_dims_, learning_rate=0.00042, num
         cost = compute_cost(AL, y_)
         grads = L_model_backward(AL, y_, caches)
         parameters_ = update_parameters(parameters_, grads, learning_rate)
-        if print_cost and i % 1000 == 0:
+        if print_cost and i % 500 == 0:
             print("Cost at iteration %i: %f" % (i, cost))
-        if print_cost and i % 1000 == 0:
             costs.append(cost)
+            cumulative_cost_data[0].append(i)
+            cumulative_cost_data[1].append(cost)
 
     return parameters_
 
@@ -242,6 +249,14 @@ Z, linear_cache = linear_forward(A, W1, b1)
 layers_dims = [n_x, 60, n_y]
 parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=15000, print_cost=True)
 predictions_train_L = predict_layered_network_layer(X_train, parameters)
+
+plt.plot(cumulative_cost_data[0], cumulative_cost_data[1], 'ro')
+plt.grid(True)
+plt.title('Cost vs Iterations during Training')
+plt.xlabel('# of Iterations')
+plt.ylabel('# Cost')
+
+
 print(np.sum(predictions_train_L == y_train))
 
 predictions_test_L = predict_layered_network_layer(X_test, parameters)
@@ -259,3 +274,5 @@ test_digit = np.asanyarray([0,0,1,0,0,
 test_digit = sc.transform(test_digit).T
 predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
 print('Predicted digit is : ' + str(predicted_digit))
+
+plt.show()
