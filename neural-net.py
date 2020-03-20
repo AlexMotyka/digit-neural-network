@@ -248,7 +248,7 @@ Z, linear_cache = linear_forward(A, W1, b1)
 
 # N layer neural network
 layers_dims = [n_x, 60, n_y]
-parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=15000, print_cost=True)
+parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=35000, print_cost=True)
 predictions_train_L = predict_layered_network_layer(X_train, parameters)
 
 # Creates a scatter plot that visualizes the cost over time
