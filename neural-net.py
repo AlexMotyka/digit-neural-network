@@ -5,11 +5,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
+"""
+This is a neural network that trains itself to classify the digits 0-9.
+A training set for each digit can be found in digits.py
+A test set for each digit can be found in testDigits.py
+"""
 # stores iterations and costs for the Cost vs. Iterations graph
 # first array stores iterations
 # second array stores costs
 cumulative_cost_data = [[],[]]
 
+# initialize the weights and biases for the neural network
 def initialize_parameters_deep(layer_dims):
     np.random.seed(3)
     parameters_ = {}
@@ -166,7 +172,7 @@ train_data = []
 correct_outputs = []
 
 # read in data from digits.py and append it to the training data
-# the correct output the network should produce for that digit is appended to the correct_outputs array 
+# the correct output the network should produce for that digit is appended to the correct_outputs array
 for digit in digits.zeros:
     train_data.append(digit)
     correct_outputs.append([0])
@@ -275,7 +281,7 @@ correct_digits = []
 total_correct = 0
 
 # read in data from testDigits.py and append it to the test data
-# the correct output the network should produce for that digit is appended to the correct digits array 
+# the correct output the network should produce for that digit is appended to the correct digits array
 for digit in testDigits.zeros:
     test_data.append(digit)
     correct_digits.append(0)
