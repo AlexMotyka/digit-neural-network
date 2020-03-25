@@ -230,17 +230,18 @@ y_test = y_test.reshape(y_test.shape[0], 1)
 y_train = y_train.T
 y_test = y_test.T
 
-Y_train_ = np.zeros((10, y_train.shape[1]))
+Y_train_ = np.zeros((3, y_train.shape[1]))
 for i in range(y_train.shape[1]):
     Y_train_[y_train[0, i], i] = 1
 
-Y_test_ = np.zeros((10, y_test.shape[1]))
+Y_test_ = np.zeros((3, y_test.shape[1]))
 for i in range(y_test.shape[1]):
     Y_test_[y_test[0, i], i] = 1
 
 n_x = X_train.shape[0]
 n_h = 10
 n_y = Y_train_.shape[0]
+print("n_y: " + str(n_y))
 parameters = initialize_parameters_deep([n_x, 10, n_y])
 W1 = parameters["W1"]
 b1 = parameters["b1"]
