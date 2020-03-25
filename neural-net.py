@@ -5,17 +5,33 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
-"""
-This is a neural network that trains itself to classify the digits 0-9.
-A training set for each digit can be found in digits.py
-A test set for each digit can be found in testDigits.py
-"""
 # stores iterations and costs for the Cost vs. Iterations graph
 # first array stores iterations
 # second array stores costs
 cumulative_cost_data = [[],[]]
 
-# initialize the weights and biases for the neural network
+train_data = []
+correct_outputs = []
+"""----------Activation Functions----------"""
+def relu_backward(deriv_activation, activation_cache):
+    return deriv_activation * 1. * (activation_cache> 0)
+
+
+def sigmoid_backward(deriv_activation, activation_cache):
+    return deriv_activation * (1 / (1 + np.exp(-activation_cache))) * (1 - (1 / (1 + np.exp(-activation_cache))))
+
+
+def sigmoid(weighted_sum):
+    return (1 / (1 + np.exp(-weighted_sum))), weighted_sum
+
+
+def relu(weighted_sum):
+    return weighted_sum * (weighted_sum > 0), weighted_sum
+"""----------------------------------------"""
+
+"""
+Init the parameters
+"""
 def initialize_parameters_deep(layer_dims):
     np.random.seed(3)
     parameters_ = {}
@@ -25,52 +41,43 @@ def initialize_parameters_deep(layer_dims):
         parameters_['b' + str(l)] = np.zeros((layer_dims[l], 1))
     return parameters_
 
+"""
+linear_forward
+*no activation*
+"""
 def linear_forward(activation, weight, bias):
     weighted_sum = np.dot(weight, activation) + bias
     cache = (activation, weight, bias)
     return weighted_sum, cache
 
-
-def sigmoid_(weighted_sum):
-    return 1 / (1 + np.exp(-weighted_sum))
-
-
-def relu_(weighted_sum):
-    return weighted_sum * (weighted_sum > 0)
-
-
-def drelu_(weighted_sum):
-    return 1. * (weighted_sum > 0)
-
-
-def dsigmoid_(weighted_sum):
-    return sigmoid_(weighted_sum) * (1 - sigmoid_(weighted_sum))
-
-
-def sigmoid(weighted_sum):
-    return sigmoid_(weighted_sum), weighted_sum
-
-
-def relu(weighted_sum):
-    return relu_(weighted_sum), weighted_sum
-
-
+"""
+linear_activation_forward
+This function is a linear_forward *with* activation in the network
+activation_prev - the previous network output
+activation - the output of the network
+"""
 def linear_activation_forward(activation_prev, weight, bias, activation):
     if activation == "sigmoid":
-        weighted_sum, linear_cache = linear_forward(activation_prev, weight, bias)
+        weighted_sum, linear_cache_ = linear_forward(activation_prev, weight, bias)
         activation, activation_cache = sigmoid(weighted_sum)
 
     elif activation == "relu":
-        weighted_sum, linear_cache = linear_forward(activation_prev, weight, bias)
+        weighted_sum, linear_cache_ = linear_forward(activation_prev, weight, bias)
         activation, activation_cache = relu(weighted_sum)
 
-    cache = (linear_cache, activation_cache)
+    cache = (linear_cache_, activation_cache)
 
     return activation, cache
 
-def layer_model_forward(x, parameters_):
+"""
+forward propagation
+- move forward for all hidden layers, then one final output layer
+- hidden layers are relu activation
+- output layer is sigmoid
+"""
+def layer_model_forward(x_, parameters_):
     caches = []
-    activation = x
+    activation = x_
     param_length = len(parameters_) // 2
     for l in range(1, param_length):
         activation_prev = activation
@@ -80,12 +87,18 @@ def layer_model_forward(x, parameters_):
     caches.append(cache)
     return activation_linear, caches
 
-
+"""
+compute_cost
+This function calculates cost with the Sum of Squares Deviation formula
+y_ - the true output
+activation_layer - is the output of the network (the value)
+sse/ssd - the sum of squared deviations/error between the two 
+"""
 def compute_cost(activation_layer, y_):
-    m = y_.shape[1]
-    cost = -(1 / m) * np.sum((y_ * np.log(activation_layer) + (1 - y_) * np.log(1 - activation_layer)))
-    cost = np.squeeze(cost)
-    return cost
+    true_output_std = np.std(y_)
+    network_output_std = np.std(activation_layer)
+    sse = np.sum(np.square(true_output_std - network_output_std)) * 100.0
+    return sse
 
 def linear_backward(deriv_weighted_sum, cache):
     activation_prev, weight, bias = cache
@@ -95,29 +108,26 @@ def linear_backward(deriv_weighted_sum, cache):
     deriv_activation_prev = np.dot(weight.T, deriv_weighted_sum)
     return deriv_activation_prev, deriv_weight, deriv_bias
 
-
-def relu_backward(deriv_activation, activation_cache):
-    return deriv_activation * drelu_(activation_cache)
-
-
-def sigmoid_backward(deriv_aactivation, activation_cache):
-    return deriv_aactivation * dsigmoid_(activation_cache)
-
-
+"""
+linear backwards uses the derivatives of the activation functions instead
+"""
 def linear_activation_backward(deriv_activation, cache, activation):
     linear_cache_, activation_cache = cache
+
+    # if activation was on a hidden layer, do relu activation
     if activation == "relu":
         deriv_weighted_sum = relu_backward(deriv_activation, activation_cache)
         deriv_activation_prev, deriv_weight, deriv_bias = linear_backward(deriv_weighted_sum, linear_cache_)
 
+    # if the activation is on output layer, do sigmoid
     elif activation == "sigmoid":
         deriv_weighted_sum = sigmoid_backward(deriv_activation, activation_cache)
         deriv_activation_prev, deriv_weight, deriv_bias = linear_backward(deriv_weighted_sum, linear_cache_)
     return deriv_activation_prev, deriv_weight, deriv_bias
 
 
-# back propogation for L layers
-def L_model_backward(activation_layer, y_, caches):
+# back propogation
+def layered_model_backward(activation_layer, y_, caches):
     grads = {}
     cache_length = len(caches)
     deriv_activation_layer = - (np.divide(y_, activation_layer) - np.divide(1 - y_, 1 - activation_layer))
@@ -135,7 +145,7 @@ def L_model_backward(activation_layer, y_, caches):
     return grads
 
 
-# update parameters
+# update the parameters
 def update_parameters(parameters_, grads, learning_rate):
     param_length = len(parameters_) // 2
     for l in range(param_length):
@@ -144,19 +154,19 @@ def update_parameters(parameters_, grads, learning_rate):
     return parameters_
 
 def layered_network_layer_model(x_, y_, layers_dims_, learning_rate=0.00042, num_iterations=3000, print_cost=False):
-    np.random.seed(1)
+    np.random.seed(1314)
     costs = []
     parameters_ = initialize_parameters_deep(layers_dims_)
-    for i in range(0, num_iterations):
-        AL, caches = layer_model_forward(x_, parameters_)
-        cost = compute_cost(AL, y_)
-        grads = L_model_backward(AL, y_, caches)
+    for j in range(0, num_iterations):
+        activation_layer, caches = layer_model_forward(x_, parameters_)
+        sse = compute_cost(activation_layer, y_)
+        grads = layered_model_backward(activation_layer, y_, caches)
         parameters_ = update_parameters(parameters_, grads, learning_rate)
-        if print_cost and i % 500 == 0:
-            print("Cost at iteration %i: %f" % (i, cost))
-            costs.append(cost)
-            cumulative_cost_data[0].append(i)
-            cumulative_cost_data[1].append(cost)
+        if print_cost and j % 500 == 0:
+            print("Cost at iteration %i: %f SSE" % (j, sse))
+            costs.append(sse)
+            cumulative_cost_data[0].append(j)
+            cumulative_cost_data[1].append(sse)
 
     return parameters_
 
@@ -164,79 +174,92 @@ def predict_layered_network_layer(x_, parameters_, results=False):
     a_l, caches = layer_model_forward(x_, parameters_)
     if results:
         return a_l.reshape(1, a_l.shape[0]), np.argmax(a_l, axis=0)
-    prediction = np.argmax(a_l, axis=0)
-    return prediction.reshape(1, prediction.shape[0])
+    prediction_ = np.argmax(a_l, axis=0)
+    return prediction_.reshape(1, prediction_.shape[0]), prediction_
 
-
-train_data = []
-correct_outputs = []
-
+'''----- main code starts here ------'''
 # read in data from digits.py and append it to the training data
-# the correct output the network should produce for that digit is appended to the correct_outputs array
-for digit in digits.zeros:
-    train_data.append(digit)
-    correct_outputs.append([0])
-for digit in digits.ones:
-    train_data.append(digit)
-    correct_outputs.append([1])
-for digit in digits.twos:
-    train_data.append(digit)
-    correct_outputs.append([2])
-for digit in digits.threes:
-    train_data.append(digit)
-    correct_outputs.append([3])
-for digit in digits.fours:
-    train_data.append(digit)
-    correct_outputs.append([4])
-for digit in digits.fives:
-    train_data.append(digit)
-    correct_outputs.append([5])
-for digit in digits.sixes:
-    train_data.append(digit)
-    correct_outputs.append([6])
-for digit in digits.sevens:
-    train_data.append(digit)
-    correct_outputs.append([7])
-for digit in digits.eights:
-    train_data.append(digit)
-    correct_outputs.append([8])
-for digit in digits.nines:
-    train_data.append(digit)
-    correct_outputs.append([9])
+# the correct output the network should produce for that digit is appended to the correct_outputs array 
+# for digit in digits.zeros:
+#     train_data.append(digit)
+#     correct_outputs.append([0])
+# for digit in digits.ones:
+#     train_data.append(digit)
+#     correct_outputs.append([1])
+# for digit in digits.twos:
+#     train_data.append(digit)
+#     correct_outputs.append([2])
+# for digit in digits.threes:
+#     train_data.append(digit)
+#     correct_outputs.append([3])
+# for digit in digits.fours:
+#     train_data.append(digit)
+#     correct_outputs.append([4])
+# for digit in digits.fives:
+#     train_data.append(digit)
+#     correct_outputs.append([5])
+# for digit in digits.sixes:
+#     train_data.append(digit)
+#     correct_outputs.append([6])
+# for digit in digits.sevens:
+#     train_data.append(digit)
+#     correct_outputs.append([7])
+# for digit in digits.eights:
+#     train_data.append(digit)
+#     correct_outputs.append([8])
+# for digit in digits.nines:
+#     train_data.append(digit)
+#     correct_outputs.append([9])
+
+with open("./datasets/breast_cancer_data/wdbc.data", "r") as f:
+    lines = [line.rstrip('\n') for line in f]
+
+
+answers_arr = []
+input_arr = []
+
+for line in lines:
+    line = line.split(',')
+    if line[1] == 'M':
+        answers_arr.append(1)
+    else:
+        answers_arr.append(0)
+    line.remove(line[0])
+    line.remove(line[0])
+    input_arr.append(line)
+
+
 
 # convert the lists to numpy array for performance, and then zip them together
-train_data = np.asanyarray(train_data, dtype=np.uint8)
-correct_outputs = np.asanyarray(correct_outputs, dtype=np.uint8)
-images_and_labels = list(zip(train_data, correct_outputs))
+train_data = np.asanyarray(input_arr)
+correct_outputs = np.asanyarray(answers_arr)
+data_and_labels = list(zip(train_data, correct_outputs))
 
 # Define variables
 n_samples = len(train_data)
-print(n_samples)
+print("number of samples: " + str(n_samples))
 
 x = train_data.reshape((n_samples, -1))
-print(x.shape)
+print("train data shape: " + str(x.shape))
 
 y = correct_outputs
-print(y.shape)
+print("answers data shape: " + str(y.shape))
 
-
-
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
-
-# Feature Scaling
-
-
+# split the set and use 30 percent as test data
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+# # scale the features
 sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
+x_train = sc.fit_transform(x_train)
+x_test = sc.transform(x_test)
 
-X_train = X_train.T
-X_test = X_test.T
+x_train = x_train.T
+x_test = x_test.T
 y_train = y_train.reshape(y_train.shape[0], 1)
 y_test = y_test.reshape(y_test.shape[0], 1)
 y_train = y_train.T
 y_test = y_test.T
 
+# generate weight matrix
 Y_train_ = np.zeros((10, y_train.shape[1]))
 for i in range(y_train.shape[1]):
     Y_train_[y_train[0, i], i] = 1
@@ -245,21 +268,21 @@ Y_test_ = np.zeros((10, y_test.shape[1]))
 for i in range(y_test.shape[1]):
     Y_test_[y_test[0, i], i] = 1
 
-n_x = X_train.shape[0]
+n_x = x_train.shape[0]
 n_h = 10
 n_y = Y_train_.shape[0]
 parameters = initialize_parameters_deep([n_x, 10, n_y])
 W1 = parameters["W1"]
 b1 = parameters["b1"]
 
-A = X_train
-Z, linear_cache = linear_forward(A, W1, b1)
+a = x_train
+weighted_sum_, linear_cache = linear_forward(a, W1, b1)
 
 # N layer neural network
 # 45 inputs, 60 outputs in the hidden layer, and 10 outputs in the last layer(1 for each digit)
 layers_dims = [n_x, 60, n_y]
-parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=35000, print_cost=True)
-predictions_train_L = predict_layered_network_layer(X_train, parameters)
+parameters = layered_network_layer_model(x_train, Y_train_, layers_dims, num_iterations=35000, print_cost=True)
+predictions_train_L, raw_prediction_list_train = predict_layered_network_layer(x_train, parameters)
 
 # Creates a scatter plot that visualizes the cost over time
 plt.plot(cumulative_cost_data[0], cumulative_cost_data[1], 'ro')
@@ -267,85 +290,33 @@ plt.grid(True)
 plt.title('Cost vs Iterations during Training')
 plt.xlabel('# of Iterations')
 plt.ylabel('Cost')
-
-
-print(np.sum(predictions_train_L == y_train))
-
-predictions_test_L = predict_layered_network_layer(X_test, parameters)
-print(np.sum(predictions_test_L == y_test))
-
-# arrays to store the test data
-test_data = []
-correct_digits = []
-# total correct predictions
-total_correct = 0
-
-# read in data from testDigits.py and append it to the test data
-# the correct output the network should produce for that digit is appended to the correct digits array
-for digit in testDigits.zeros:
-    test_data.append(digit)
-    correct_digits.append(0)
-for digit in testDigits.ones:
-    test_data.append(digit)
-    correct_digits.append(1)
-for digit in testDigits.twos:
-    test_data.append(digit)
-    correct_digits.append(2)
-for digit in testDigits.threes:
-    test_data.append(digit)
-    correct_digits.append(3)
-for digit in testDigits.fours:
-    test_data.append(digit)
-    correct_digits.append(4)
-for digit in testDigits.fives:
-    test_data.append(digit)
-    correct_digits.append(5)
-for digit in testDigits.sixes:
-    test_data.append(digit)
-    correct_digits.append(6)
-for digit in testDigits.sevens:
-    test_data.append(digit)
-    correct_digits.append(7)
-for digit in testDigits.eights:
-    test_data.append(digit)
-    correct_digits.append(8)
-for digit in testDigits.nines:
-    test_data.append(digit)
-    correct_digits.append(9)
-# loop through the test data and feed each test digit through the network
-index = 0
-for digit in test_data:
-    # format the test digit as a valid numpy array
-    test_digit = np.asanyarray(digit, dtype=np.uint8).reshape((45, 1)).T
-    test_digit = sc.transform(test_digit).T
-    predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
-    print("\n")
-    # Output from the last layer of the network
-    print(predicted_digit[0])
-    # The network prediction is the digit with the highest confidence
-    prediction = np.argmax(predicted_digit[0])
-
-    if prediction == correct_digits[index]:
-        total_correct += 1
-        print("Prediction of " + str(prediction) + " is CORRECT")
-    else:
-        print("Prediction of " + str(prediction) + " is WRONG")
-    index += 1
-print("\nTotal correct: " + str(total_correct) + "/30")
-
-
-
-# test_digit = np.asanyarray([0,0,1,0,0,
-#             0,1,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0], dtype=np.uint8).reshape((45, 1)).T
-# test_digit = sc.transform(test_digit).T
-# predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
-# print('Predicted digit is : ' + str(predicted_digit))
-
 plt.show()
+
+
+predictions_test_L, raw_prediction_list_test = predict_layered_network_layer(x_test, parameters)
+
+expected_results = y_test[0].tolist()
+predicted_results = list(np.array(raw_prediction_list_test))
+
+# calculate the confusion matrix
+actual_y_predict_y = 0
+actual_n_predict_y = 0
+actual_y_predict_n = 0
+actual_n_predict_n = 0
+count = 0
+for value in predicted_results:
+    temp_val = value.astype(np.int32)
+    if temp_val == 1 and expected_results[count] == 1:
+        actual_y_predict_y = actual_y_predict_y + 1
+    elif temp_val  == 0 and expected_results[count] == 0:
+        actual_n_predict_n = actual_n_predict_n + 1
+    elif temp_val  == 0 and expected_results[count] == 1:
+        actual_y_predict_n = actual_y_predict_n + 1
+    elif temp_val  == 1 and expected_results[count] == 0:
+        actual_n_predict_y = actual_n_predict_y + 1
+    count = count + 1
+
+print("A YES : P YES - " + str(actual_y_predict_y) + '\n')
+print("A YES : P NO - " + str(actual_y_predict_n) + '\n')
+print("A NO : P NO - " + str(actual_n_predict_n) + '\n')
+print("A NO : P YES - " + str(actual_n_predict_y) + '\n')

@@ -2,11 +2,6 @@ from random import seed
 from random import randint
 import os
 
-"""
-This script generates a specified number of variations for each digit from 0-9.
-The variations of the digits are written to a corresponding txt file for that digit
-in the digits_correct folder.
-"""
 zero = [0,1,1,1,0,
         1,0,0,0,1,
         1,0,0,0,1,
@@ -227,3 +222,4 @@ test = [1, 1, 1, 1, 0,
         1, 0, 0, 0, 1,
         1, 0, 0, 0, 1,
         0, 1, 1, 1, 0]
+
