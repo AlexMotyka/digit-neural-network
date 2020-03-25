@@ -4,11 +4,6 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import pandas as pd
 
-"""
-This is a neural network that trains itself to classify the digits 0-9.
-A training set for each digit can be found in digits.py
-A test set for each digit can be found in testDigits.py
-"""
 # stores iterations and costs for the Cost vs. Iterations graph
 # first array stores iterations
 # second array stores costs
@@ -230,19 +225,25 @@ y_test = y_test.reshape(y_test.shape[0], 1)
 y_train = y_train.T
 y_test = y_test.T
 
-Y_train_ = np.zeros((3, y_train.shape[1]))
+num_output_neurons = 3
+
+Y_train_ = np.zeros((num_output_neurons, y_train.shape[1]))
 for i in range(y_train.shape[1]):
     Y_train_[y_train[0, i], i] = 1
 
-Y_test_ = np.zeros((3, y_test.shape[1]))
+Y_test_ = np.zeros((num_output_neurons, y_test.shape[1]))
 for i in range(y_test.shape[1]):
     Y_test_[y_test[0, i], i] = 1
 
+# the number of inputs
 n_x = X_train.shape[0]
-n_h = 10
+
+# number of hidden neurons
+n_hidden = 10
+
+# the number of output neurons
 n_y = Y_train_.shape[0]
-print("n_y: " + str(n_y))
-parameters = initialize_parameters_deep([n_x, 10, n_y])
+parameters = initialize_parameters_deep([n_x, n_hidden, n_y])
 W1 = parameters["W1"]
 b1 = parameters["b1"]
 
@@ -250,9 +251,9 @@ A = X_train
 Z, linear_cache = linear_forward(A, W1, b1)
 
 # N layer neural network
-# 45 inputs, 60 outputs in the hidden layer, and 10 outputs in the last layer(1 for each digit)
-layers_dims = [n_x, 60, n_y]
-parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=35000, print_cost=True)
+# 4 inputs, 10 outputs in the hidden layer, and 3 outputs in the last layer(1 for each iris class)
+layers_dims = [n_x, n_hidden, n_y]
+parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=50000, print_cost=True)
 predictions_train_L = predict_layered_network_layer(X_train, parameters)
 
 # Creates a scatter plot that visualizes the cost over time
