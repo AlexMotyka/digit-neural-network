@@ -165,32 +165,28 @@ train_data = []
 correct_outputs = []
 # arrays to store the test data
 test_data = []
-correct_iris = []
+correct_class = []
 
 # get iris data from data file
-iris_data = pd.read_csv("iris.csv")
+bank_data = pd.read_csv("bank.csv", delimiter=";")
 
-split = np.random.rand(len(iris_data)) < 0.8
-train = iris_data[split]
-test = iris_data[~split]
+split = np.random.rand(len(bank_data)) < 0.7
+train = bank_data[split]
+test = bank_data[~split]
 
 for index, row in train.iterrows():
-    train_data.append([row[0], row[1], row[2], row[3]])
-    if row[4] == "Iris-setosa":
+    train_data.append([row[0], row[1], row[2], row[3], row[4], row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]])
+    if row["y"] == "no":
         correct_outputs.append([0])
-    elif row[4] == "Iris-versicolor":
-        correct_outputs.append([1])
     else:
-        correct_outputs.append([2])
+        correct_outputs.append([1])
 
 for index, row in test.iterrows():
-    test_data.append([row[0], row[1], row[2], row[3]])
-    if row[4] == "Iris-setosa":
-        correct_iris.append(0)
-    elif row[4] == "Iris-versicolor":
-        correct_iris.append(1)
+    test_data.append([row[0], row[1], row[2], row[3], row[4], row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]])
+    if row["y"] == "no":
+        correct_class.append(0)
     else:
-        correct_iris.append(2)
+        correct_class.append(1)
 
 # convert the lists to numpy array for performance, and then zip them together
 train_data = np.asanyarray(train_data, dtype=np.uint8)
@@ -206,8 +202,6 @@ print(x.shape)
 
 y = correct_outputs
 print(y.shape)
-
-
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
@@ -225,7 +219,7 @@ y_test = y_test.reshape(y_test.shape[0], 1)
 y_train = y_train.T
 y_test = y_test.T
 
-num_output_neurons = 3
+num_output_neurons = 2
 
 Y_train_ = np.zeros((num_output_neurons, y_train.shape[1]))
 for i in range(y_train.shape[1]):
@@ -239,7 +233,7 @@ for i in range(y_test.shape[1]):
 n_x = X_train.shape[0]
 
 # number of hidden neurons
-n_hidden = 10
+n_hidden = 50
 
 # the number of output neurons
 n_y = Y_train_.shape[0]
@@ -274,18 +268,18 @@ print(np.sum(predictions_test_L == y_test))
 total_correct = 0
 # loop through the test data and feed each test digit through the network
 index = 0
-for iris in test_data:
+for point in test_data:
     # format the test digit as a valid numpy array
-    test_iris = np.asanyarray(iris, dtype=np.uint8).reshape((4, 1)).T
-    test_iris = sc.transform(test_iris).T
-    predicted_iris = predict_layered_network_layer(test_iris, parameters, True)
+    test_point = np.asanyarray(point, dtype=np.uint8).reshape((n_x, 1)).T
+    test_point = sc.transform(test_point).T
+    predicted_class = predict_layered_network_layer(test_point, parameters, True)
     print("\n")
     # Output from the last layer of the network
-    print(predicted_iris[0])
+    print(predicted_class[0])
     # The network prediction is the digit with the highest confidence
-    prediction = np.argmax(predicted_iris[0])
-    print("Prediction is: " + str(prediction) + " and Actual is: " + str(correct_iris[index]))
-    if prediction == correct_iris[index]:
+    prediction = np.argmax(predicted_class[0])
+    print("Prediction is: " + str(prediction) + " and Actual is: " + str(correct_class[index]))
+    if prediction == correct_class[index]:
         total_correct += 1
         print("CORRECT")
     else:
