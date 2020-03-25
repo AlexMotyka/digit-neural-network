@@ -1,1 +1,1 @@
-# digit-neural-network
+# cancer-prediction
