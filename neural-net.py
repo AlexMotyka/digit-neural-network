@@ -270,6 +270,7 @@ print(np.sum(predictions_test_L == y_test))
 
 # total correct predictions
 total_correct = 0
+test_points = len(train_data)
 # loop through the test data and feed each test digit through the network
 index = 0
 for point in test_data:
@@ -289,6 +290,6 @@ for point in test_data:
     else:
         print("WRONG")
     index += 1
-print("\nTotal correct: " + str(total_correct) + "/30")
+print("\nTotal correct: " + str(total_correct) + "/" + str(test_points))
 
 plt.show()
