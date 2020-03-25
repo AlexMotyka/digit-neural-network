@@ -161,6 +161,10 @@ def predict_layered_network_layer(x_, parameters_, results=False):
     prediction = np.argmax(a_l, axis=0)
     return prediction.reshape(1, prediction.shape[0])
 
+def encode_string(string):
+    res = ''.join(format(ord(char), 'b') for char in string)
+    return res
+
 train_data = []
 correct_outputs = []
 # arrays to store the test data
@@ -175,22 +179,22 @@ train = bank_data[split]
 test = bank_data[~split]
 
 for index, row in train.iterrows():
-    train_data.append([row[0], row[1], row[2], row[3], row[4], row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]])
+    train_data.append([row[0], encode_string(row[1]), encode_string(row[2]), encode_string(row[3]), encode_string(row[4]), row[5], encode_string(row[6]), encode_string(row[7]),encode_string(row[8]),row[9], encode_string(row[10]),row[11],row[12],row[13],row[14],encode_string(row[15])])
     if row["y"] == "no":
         correct_outputs.append([0])
     else:
         correct_outputs.append([1])
 
 for index, row in test.iterrows():
-    test_data.append([row[0], row[1], row[2], row[3], row[4], row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15]])
+    test_data.append([row[0], encode_string(row[1]), encode_string(row[2]), encode_string(row[3]), encode_string(row[4]), row[5], encode_string(row[6]), encode_string(row[7]),encode_string(row[8]),row[9], encode_string(row[10]),row[11],row[12],row[13],row[14],encode_string(row[15])])
     if row["y"] == "no":
         correct_class.append(0)
     else:
         correct_class.append(1)
-
+print(train_data)
 # convert the lists to numpy array for performance, and then zip them together
-train_data = np.asanyarray(train_data, dtype=np.uint8)
-correct_outputs = np.asanyarray(correct_outputs, dtype=np.uint8)
+train_data = np.asanyarray(train_data)
+correct_outputs = np.asanyarray(correct_outputs)
 images_and_labels = list(zip(train_data, correct_outputs))
 
 # Define variables
@@ -270,7 +274,7 @@ total_correct = 0
 index = 0
 for point in test_data:
     # format the test digit as a valid numpy array
-    test_point = np.asanyarray(point, dtype=np.uint8).reshape((n_x, 1)).T
+    test_point = np.asanyarray(point).reshape((n_x, 1)).T
     test_point = sc.transform(test_point).T
     predicted_class = predict_layered_network_layer(test_point, parameters, True)
     print("\n")
