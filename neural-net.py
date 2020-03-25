@@ -1,9 +1,8 @@
 import numpy as np
-import digits
-import testDigits
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+import pandas as pd
 
 """
 This is a neural network that trains itself to classify the digits 0-9.
@@ -167,42 +166,36 @@ def predict_layered_network_layer(x_, parameters_, results=False):
     prediction = np.argmax(a_l, axis=0)
     return prediction.reshape(1, prediction.shape[0])
 
-
 train_data = []
 correct_outputs = []
+# arrays to store the test data
+test_data = []
+correct_iris = []
 
-# read in data from digits.py and append it to the training data
-# the correct output the network should produce for that digit is appended to the correct_outputs array
-for digit in digits.zeros:
-    train_data.append(digit)
-    correct_outputs.append([0])
-for digit in digits.ones:
-    train_data.append(digit)
-    correct_outputs.append([1])
-for digit in digits.twos:
-    train_data.append(digit)
-    correct_outputs.append([2])
-for digit in digits.threes:
-    train_data.append(digit)
-    correct_outputs.append([3])
-for digit in digits.fours:
-    train_data.append(digit)
-    correct_outputs.append([4])
-for digit in digits.fives:
-    train_data.append(digit)
-    correct_outputs.append([5])
-for digit in digits.sixes:
-    train_data.append(digit)
-    correct_outputs.append([6])
-for digit in digits.sevens:
-    train_data.append(digit)
-    correct_outputs.append([7])
-for digit in digits.eights:
-    train_data.append(digit)
-    correct_outputs.append([8])
-for digit in digits.nines:
-    train_data.append(digit)
-    correct_outputs.append([9])
+# get iris data from data file
+iris_data = pd.read_csv("iris.csv")
+
+split = np.random.rand(len(iris_data)) < 0.8
+train = iris_data[split]
+test = iris_data[~split]
+
+for index, row in train.iterrows():
+    train_data.append([row[0], row[1], row[2], row[3]])
+    if row[4] == "Iris-setosa":
+        correct_outputs.append([0])
+    elif row[4] == "Iris-versicolor":
+        correct_outputs.append([1])
+    else:
+        correct_outputs.append([2])
+
+for index, row in test.iterrows():
+    test_data.append([row[0], row[1], row[2], row[3]])
+    if row[4] == "Iris-setosa":
+        correct_iris.append(0)
+    elif row[4] == "Iris-versicolor":
+        correct_iris.append(1)
+    else:
+        correct_iris.append(2)
 
 # convert the lists to numpy array for performance, and then zip them together
 train_data = np.asanyarray(train_data, dtype=np.uint8)
@@ -274,78 +267,28 @@ print(np.sum(predictions_train_L == y_train))
 predictions_test_L = predict_layered_network_layer(X_test, parameters)
 print(np.sum(predictions_test_L == y_test))
 
-# arrays to store the test data
-test_data = []
-correct_digits = []
+
 # total correct predictions
 total_correct = 0
-
-# read in data from testDigits.py and append it to the test data
-# the correct output the network should produce for that digit is appended to the correct digits array
-for digit in testDigits.zeros:
-    test_data.append(digit)
-    correct_digits.append(0)
-for digit in testDigits.ones:
-    test_data.append(digit)
-    correct_digits.append(1)
-for digit in testDigits.twos:
-    test_data.append(digit)
-    correct_digits.append(2)
-for digit in testDigits.threes:
-    test_data.append(digit)
-    correct_digits.append(3)
-for digit in testDigits.fours:
-    test_data.append(digit)
-    correct_digits.append(4)
-for digit in testDigits.fives:
-    test_data.append(digit)
-    correct_digits.append(5)
-for digit in testDigits.sixes:
-    test_data.append(digit)
-    correct_digits.append(6)
-for digit in testDigits.sevens:
-    test_data.append(digit)
-    correct_digits.append(7)
-for digit in testDigits.eights:
-    test_data.append(digit)
-    correct_digits.append(8)
-for digit in testDigits.nines:
-    test_data.append(digit)
-    correct_digits.append(9)
 # loop through the test data and feed each test digit through the network
 index = 0
-for digit in test_data:
+for iris in test_data:
     # format the test digit as a valid numpy array
-    test_digit = np.asanyarray(digit, dtype=np.uint8).reshape((45, 1)).T
-    test_digit = sc.transform(test_digit).T
-    predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
+    test_iris = np.asanyarray(iris, dtype=np.uint8).reshape((4, 1)).T
+    test_iris = sc.transform(test_iris).T
+    predicted_iris = predict_layered_network_layer(test_iris, parameters, True)
     print("\n")
     # Output from the last layer of the network
-    print(predicted_digit[0])
+    print(predicted_iris[0])
     # The network prediction is the digit with the highest confidence
-    prediction = np.argmax(predicted_digit[0])
-
-    if prediction == correct_digits[index]:
+    prediction = np.argmax(predicted_iris[0])
+    print("Prediction is: " + str(prediction) + " and Actual is: " + str(correct_iris[index]))
+    if prediction == correct_iris[index]:
         total_correct += 1
-        print("Prediction of " + str(prediction) + " is CORRECT")
+        print("CORRECT")
     else:
-        print("Prediction of " + str(prediction) + " is WRONG")
+        print("WRONG")
     index += 1
 print("\nTotal correct: " + str(total_correct) + "/30")
-
-
-
-# test_digit = np.asanyarray([0,0,1,0,0,
-#             0,1,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0,
-#             0,0,1,0,0], dtype=np.uint8).reshape((45, 1)).T
-# test_digit = sc.transform(test_digit).T
-# predicted_digit = predict_layered_network_layer(test_digit, parameters, True)
-# print('Predicted digit is : ' + str(predicted_digit))
 
 plt.show()
