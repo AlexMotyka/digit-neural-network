@@ -165,12 +165,12 @@ train_data = []
 correct_outputs = []
 # arrays to store the test data
 test_data = []
-correct_iris = []
+correct_class = []
 
 # get iris data from data file
 iris_data = pd.read_csv("iris.csv")
 
-split = np.random.rand(len(iris_data)) < 0.8
+split = np.random.rand(len(iris_data)) < 0.7
 train = iris_data[split]
 test = iris_data[~split]
 
@@ -186,11 +186,11 @@ for index, row in train.iterrows():
 for index, row in test.iterrows():
     test_data.append([row[0], row[1], row[2], row[3]])
     if row[4] == "Iris-setosa":
-        correct_iris.append(0)
+        correct_class.append(0)
     elif row[4] == "Iris-versicolor":
-        correct_iris.append(1)
+        correct_class.append(1)
     else:
-        correct_iris.append(2)
+        correct_class.append(2)
 
 # convert the lists to numpy array for performance, and then zip them together
 train_data = np.asanyarray(train_data, dtype=np.uint8)
@@ -272,25 +272,72 @@ print(np.sum(predictions_test_L == y_test))
 
 # total correct predictions
 total_correct = 0
+test_points = len(test_data)
 # loop through the test data and feed each test digit through the network
 index = 0
-for iris in test_data:
+
+true_pos_setosa = 0
+true_pos_versicolor = 0
+true_pos_virginica = 0
+false_pos_setosa = 0
+false_pos_versicolor = 0
+false_pos_virginica = 0
+false_neg_setosa = 0
+false_neg_versicolor = 0
+false_neg_viriginica = 0
+
+# loop through the test data and feed each test digit through the network
+index = 0
+for point in test_data:
     # format the test digit as a valid numpy array
-    test_iris = np.asanyarray(iris, dtype=np.uint8).reshape((4, 1)).T
-    test_iris = sc.transform(test_iris).T
-    predicted_iris = predict_layered_network_layer(test_iris, parameters, True)
+    test_point = np.asanyarray(point).reshape((n_x, 1)).T
+    test_point = sc.transform(test_point).T
+    predicted_class = predict_layered_network_layer(test_point, parameters, True)
     print("\n")
     # Output from the last layer of the network
-    print(predicted_iris[0])
+    print(predicted_class[0])
     # The network prediction is the digit with the highest confidence
-    prediction = np.argmax(predicted_iris[0])
-    print("Prediction is: " + str(prediction) + " and Actual is: " + str(correct_iris[index]))
-    if prediction == correct_iris[index]:
+    prediction = np.argmax(predicted_class[0])
+    print("Prediction is: " + str(prediction) + " and Actual is: " + str(correct_class[index]))
+    if prediction == correct_class[index]:
         total_correct += 1
         print("CORRECT")
+        if prediction == 0:
+            true_pos_setosa += 1
+        elif prediction == 1:
+            true_pos_versicolor += 1
+        else:
+            true_pos_virginica +=1
     else:
         print("WRONG")
+        if prediction == 0:
+            false_pos_setosa += 1
+            if correct_class[index] == 1:
+                false_neg_versicolor += 1
+            else:
+                false_neg_viriginica += 1
+        elif prediction == 1:
+            false_pos_versicolor += 1
+            if correct_class[index] == 0:
+                false_neg_setosa += 1
+            else:
+                false_neg_viriginica += 1
+        else:
+            false_pos_virginica +=1
+            if correct_class[index] == 0:
+                false_neg_setosa += 1
+            else:
+                false_neg_versicolor += 1
     index += 1
-print("\nTotal correct: " + str(total_correct) + "/30")
+print("\nTotal correct: " + str(total_correct) + "/" + str(test_points))
+print("\nTrue Positive Setosa: " + str(true_pos_setosa))
+print("\nTrue Positive Versicolor: " + str(true_pos_versicolor))
+print("\nTrue Positive Viriginica: " + str(true_pos_virginica))
+print("\nFalse Positive Setosa: " + str(false_pos_setosa))
+print("\nFalse Postive Versicolor: " + str(false_pos_versicolor))
+print("\nFalse Positive Viriginica: " + str(false_pos_virginica))
+print("\nFalse Negative Setosa: " + str(false_neg_setosa))
+print("\nFalse Negative Versicolor: " + str(false_neg_versicolor))
+print("\nFalse Negative Viriginica: " + str(false_neg_viriginica))
 
 plt.show()
