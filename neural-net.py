@@ -191,7 +191,7 @@ for index, row in test.iterrows():
         correct_class.append(0)
     else:
         correct_class.append(1)
-print(train_data)
+
 # convert the lists to numpy array for performance, and then zip them together
 train_data = np.asanyarray(train_data)
 correct_outputs = np.asanyarray(correct_outputs)
@@ -199,7 +199,6 @@ images_and_labels = list(zip(train_data, correct_outputs))
 
 # Define variables
 n_samples = len(train_data)
-print(n_samples)
 
 x = train_data.reshape((n_samples, -1))
 print(x.shape)
@@ -237,7 +236,7 @@ for i in range(y_test.shape[1]):
 n_x = X_train.shape[0]
 
 # number of hidden neurons
-n_hidden = 50
+n_hidden = 30
 
 # the number of output neurons
 n_y = Y_train_.shape[0]
@@ -270,7 +269,12 @@ print(np.sum(predictions_test_L == y_test))
 
 # total correct predictions
 total_correct = 0
-test_points = len(train_data)
+test_points = len(test_data)
+
+false_positive = 0
+true_positive = 0
+true_negative = 0
+false_negative = 0
 # loop through the test data and feed each test digit through the network
 index = 0
 for point in test_data:
@@ -287,9 +291,22 @@ for point in test_data:
     if prediction == correct_class[index]:
         total_correct += 1
         print("CORRECT")
+        if prediction == 0:
+            true_negative += 1
+        elif prediction == 1:
+            true_positive += 1
     else:
         print("WRONG")
+        if prediction == 0:
+            false_negative += 1
+        elif prediction == 1:
+            false_positive += 1
     index += 1
 print("\nTotal correct: " + str(total_correct) + "/" + str(test_points))
+print("\nTrue Positive: " + str(true_positive))
+print("\nTrue Negative: " + str(true_negative))
+print("\nFalse Positive: " + str(false_positive))
+print("\nFalse Negative: " + str(false_negative))
+
 
 plt.show()
