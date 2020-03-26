@@ -3,6 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import pandas as pd
+from numpy.random import RandomState
+
 
 # stores iterations and costs for the Cost vs. Iterations graph
 # first array stores iterations
@@ -169,10 +171,10 @@ correct_class = []
 
 # get iris data from data file
 iris_data = pd.read_csv("iris.csv")
+rng = RandomState()
 
-split = np.random.rand(len(iris_data)) < 0.7
-train = iris_data[split]
-test = iris_data[~split]
+train = iris_data.sample(frac=0.7, random_state=rng)
+test = iris_data.loc[~iris_data.index.isin(train.index)]
 
 for index, row in train.iterrows():
     train_data.append([row[0], row[1], row[2], row[3]])
@@ -207,33 +209,20 @@ print(x.shape)
 y = correct_outputs
 print(y.shape)
 
-
-
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
-
 # Feature Scaling
 
-
 sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
-
+X_train = sc.fit_transform(x)
 X_train = X_train.T
-X_test = X_test.T
-y_train = y_train.reshape(y_train.shape[0], 1)
-y_test = y_test.reshape(y_test.shape[0], 1)
+
+y_train = y.reshape(y.shape[0], 1)
 y_train = y_train.T
-y_test = y_test.T
 
 num_output_neurons = 3
 
 Y_train_ = np.zeros((num_output_neurons, y_train.shape[1]))
 for i in range(y_train.shape[1]):
     Y_train_[y_train[0, i], i] = 1
-
-Y_test_ = np.zeros((num_output_neurons, y_test.shape[1]))
-for i in range(y_test.shape[1]):
-    Y_test_[y_test[0, i], i] = 1
 
 # the number of inputs
 n_x = X_train.shape[0]
@@ -262,13 +251,6 @@ plt.grid(True)
 plt.title('Cost vs Iterations during Training')
 plt.xlabel('# of Iterations')
 plt.ylabel('Cost')
-
-
-print(np.sum(predictions_train_L == y_train))
-
-predictions_test_L = predict_layered_network_layer(X_test, parameters)
-print(np.sum(predictions_test_L == y_test))
-
 
 # total correct predictions
 total_correct = 0
