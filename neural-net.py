@@ -228,7 +228,7 @@ for i in range(y_train.shape[1]):
 n_x = X_train.shape[0]
 
 # number of hidden neurons
-n_hidden = 10
+n_hidden = 30
 
 # the number of output neurons
 n_y = Y_train_.shape[0]
@@ -242,7 +242,7 @@ Z, linear_cache = linear_forward(A, W1, b1)
 # N layer neural network
 # 4 inputs, 10 outputs in the hidden layer, and 3 outputs in the last layer(1 for each iris class)
 layers_dims = [n_x, n_hidden, n_y]
-parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=50000, print_cost=True)
+parameters = layered_network_layer_model(X_train, Y_train_, layers_dims, num_iterations=60000, print_cost=True)
 predictions_train_L = predict_layered_network_layer(X_train, parameters)
 
 # Creates a scatter plot that visualizes the cost over time
@@ -261,6 +261,14 @@ index = 0
 true_pos_setosa = 0
 true_pos_versicolor = 0
 true_pos_virginica = 0
+
+pred_set_act_vers = 0
+pred_set_act_virg = 0
+pred_vers_act_set = 0
+pred_vers_act_virg = 0
+pred_virg_act_set = 0
+pred_virg_act_vers = 0
+
 false_pos_setosa = 0
 false_pos_versicolor = 0
 false_pos_virginica = 0
@@ -292,34 +300,33 @@ for point in test_data:
             true_pos_virginica +=1
     else:
         print("WRONG")
-        if prediction == 0:
-            false_pos_setosa += 1
-            if correct_class[index] == 1:
-                false_neg_versicolor += 1
-            else:
-                false_neg_viriginica += 1
-        elif prediction == 1:
-            false_pos_versicolor += 1
-            if correct_class[index] == 0:
-                false_neg_setosa += 1
-            else:
-                false_neg_viriginica += 1
-        else:
-            false_pos_virginica +=1
-            if correct_class[index] == 0:
-                false_neg_setosa += 1
-            else:
-                false_neg_versicolor += 1
+        if correct_class[index] == 0:
+            if prediction == 1:
+                pred_vers_act_set += 1
+            elif prediction == 2:
+                pred_virg_act_set += 1
+        if correct_class[index] == 1:
+            if prediction == 0:
+                pred_set_act_vers += 1
+            elif prediction == 2:
+                pred_virg_act_vers += 1
+        if correct_class[index] == 2:
+            if prediction == 0:
+                pred_set_act_virg += 1
+            elif prediction == 1:
+                pred_vers_act_virg += 1
+
     index += 1
 print("\nTotal correct: " + str(total_correct) + "/" + str(test_points))
 print("\nTrue Positive Setosa: " + str(true_pos_setosa))
 print("\nTrue Positive Versicolor: " + str(true_pos_versicolor))
 print("\nTrue Positive Viriginica: " + str(true_pos_virginica))
-print("\nFalse Positive Setosa: " + str(false_pos_setosa))
-print("\nFalse Postive Versicolor: " + str(false_pos_versicolor))
-print("\nFalse Positive Viriginica: " + str(false_pos_virginica))
-print("\nFalse Negative Setosa: " + str(false_neg_setosa))
-print("\nFalse Negative Versicolor: " + str(false_neg_versicolor))
-print("\nFalse Negative Viriginica: " + str(false_neg_viriginica))
+print("\nPredict Setosa Actual Virginica: " + str(pred_set_act_virg))
+print("\nPredict Setosa Actual Versicolor: " + str(pred_set_act_vers))
+print("\nPredict Versicolor Actual Setosa: " + str(pred_vers_act_set))
+print("\nPredict Versicolor Actual Virginica: " + str(pred_vers_act_virg))
+print("\nPredict Virginica Actual Setosa: " + str(pred_virg_act_set))
+print("\nPredict Virginica Actual Versicolor: " + str(pred_virg_act_vers))
+
 
 plt.show()
