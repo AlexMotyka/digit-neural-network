@@ -229,7 +229,7 @@ for i in range(y_train.shape[1]):
 n_x = X_train.shape[0]
 
 # number of hidden neurons
-n_hidden = 30
+n_hidden = 100
 
 # the number of output neurons
 n_y = Y_train_.shape[0]
