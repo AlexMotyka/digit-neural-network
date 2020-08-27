@@ -12,8 +12,44 @@ This is a neural network that solves the classic problem of identifying the digi
  **1**,0,0,0,**1**,  
  0,**1,1,1**,0]  
 
-To run the neural network 'cd' into the project directory and run 'python neural-net.py'
+## Running on Linux/Ubuntu
 
-neural-net.py is the script that trains and tests the neural network. It leverages data from digits.py and testDigits.py
+Git clone the repo and make sure you have python, pip, and virtualenv installed. Then execute the following in your terminal:
 
-number_gen.py is a helper script that generates variations of each digit using mutations(flipping a pixel value). These generated digits are used for training the network
+```
+cd digit-neural-network
+```
+```
+virtualenv env
+```
+```
+source env/bin/activate
+```
+```
+pip install -r requirements.txt
+```
+```
+python neural-net.py
+```
+
+## Running on Windows
+
+Git clone the repo and make sure you have python, pip, and virtualenv installed. Then execute the following in your terminal:
+
+```
+cd digit-neural-network
+```
+```
+virtualenv env
+```
+```
+.\env\Scripts\activate.bat
+```
+```
+pip install -r requirements.txt
+```
+```
+python neural-net.py
+```
+
+number_gen.py is a helper script that generates variations of each digit using mutations(flipping a pixel value). These generated digits are used for training the network.
