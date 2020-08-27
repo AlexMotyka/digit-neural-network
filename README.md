@@ -87,4 +87,4 @@ pip install -r requirements.txt
 python neural-net.py
 ```
 
-number_gen.py is a helper script that generates variations of each digit using mutations(flipping a pixel value). These generated digits are used for training the network.
+number_gen.py is a helper script that generates variations of each digit using mutations(flipping a pixel value). These generated digits are used for training the network. You do not need to run it to use the neural net.
