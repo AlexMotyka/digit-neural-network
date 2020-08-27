@@ -39,6 +39,7 @@ To train our neural network we created a script to generate digits with small mu
 
 After testing various iteration sizes we found that 35000 iterations produced the most accurate predictions. A plot of the cost mapped against the iterations can be seen below. Initially, the cost function value decreases rapidly however its rate of decrease slows down as the iterations increase.
 
+![Image of Cost vs. Iterations](https://github.com/AlexMotyka/digit-neural-network/blob/master/Figure_1.png)
 ### Prediction Accuracy
 
 To test our neural network we fed forward three variations of each digit for a total of 30 tests. With 35000 iterations during the training phase, our network was able to predict the test digits with an accuracy of 90% (27/30 correct). To choose the predicted digit the network selects the index of the output array with the highest confidence. The network had difficulties predicting eights (66% accuracy), sevens (66% accuracy), and fives (66% accuracy). In these instances of failure the network thought an eight was a nine, a seven was a one, and a five was a nine. These failures are all reasonable as the problem space of 5x9 pixels is very small and a mutation in the correct place can make any of these digits look similar to the other. 
