@@ -49,7 +49,7 @@ An interesting thing to note is our findings on prediction accuracy versus predi
 
 ## Running on Linux/Ubuntu
 
-Git clone the repo and make sure you have python, pip, and virtualenv installed. Then execute the following in your terminal:
+Git clone the repo and make sure you have **python 3.8**, pip, and virtualenv installed. Then execute the following in your terminal:
 
 ```
 cd digit-neural-network
@@ -69,7 +69,7 @@ python neural-net.py
 
 ## Running on Windows
 
-Git clone the repo and make sure you have python, pip, and virtualenv installed. Then execute the following in your terminal:
+Git clone the repo and make sure you have **python 3.8**, pip, and virtualenv installed. Then execute the following in your terminal:
 
 ```
 cd digit-neural-network
